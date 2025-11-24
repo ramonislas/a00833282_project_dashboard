@@ -1,0 +1,2 @@
+cd "C:\Users\Ramon\Desktop\escuela\Data Analytics and AI\project"
+python -m streamlit run project_dashboard.py
