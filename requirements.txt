@@ -3,4 +3,4 @@ pandas
 numpy
 xgboost
 plotly
-sklearn
+sklearn==1.7.2
