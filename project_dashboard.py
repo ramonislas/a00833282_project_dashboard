@@ -194,7 +194,7 @@ df_segment = pd.concat([df_segment, pd.DataFrame([last_row])], ignore_index=True
 total = df_segment.iloc[-1]['quantity']
 df_segment['%'] = df_segment['quantity'] / total
     
-tab1, tab2, tab3 = st.tabs(["Overview", "Prediction", "Sensitivity Analysis"])
+tab1, tab2, tab3 = st.tabs(["Overview", "Model Prediction", "Sensitivity Analysis"])
 
 def custom_metric(label, value, delta, background="#f8f9fa"):
     st.markdown(f"""
@@ -241,6 +241,46 @@ with tab1:
 
     #filters
     
+        # Model info box
+    st.markdown("""
+    <style>
+    .info-box {
+        background: #eef4ff;
+        border-left: 6px solid #3b73ff;
+        border-radius: 10px;
+        padding: 18px 22px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .info-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1f3b70;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .info-text {
+        font-size: 15px;
+        color: #333;
+        line-height: 1.45;
+    }
+    </style>
+
+    <div class="info-box">
+        <div class="info-title">ℹ️ Important</div>
+        <div class="info-text">
+            The KPIs displayed at the top are based on the complete dataset.
+            Filters only apply to the charts below, not the KPIs.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
     all_tp_values = df_full['TP'].unique().tolist() #all tp selected
     
     options = st.multiselect(
@@ -374,7 +414,7 @@ with tab1:
             df_week,
             x="date",
             y="quantity",
-            title="Trend Over Last 12 Months",
+            title=f"Trend From {start_date} to {end_date}",
             markers=True
         )
 
@@ -445,6 +485,49 @@ with tab1:
 
 with tab2:   
     st.header("Model Prediction")
+    import streamlit as st
+
+    # Model info box
+    st.markdown("""
+    <style>
+    .summary-card {
+        background-color: #f0f6ff; /* light blue background */
+        border-radius: 12px;
+        padding: 20px 26px;
+        border: 1px solid #d4e3ff;
+        margin-bottom: 20px;
+    }
+
+    .summary-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .summary-text {
+        font-size: 15px;
+        color: #444;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Render the card
+    st.markdown("""
+    <div class="summary-card">
+        <div class="summary-title">
+            <span>📈 Model Training Summary</span>
+        </div>
+        <div class="summary-text">
+            We use an XGBoost Regressor trained on historical data with a 70% training / 30% testing split.
+            The model is automatically retrained whenever new data is added, ensuring predictions always reflect
+            the most current information.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     st.write("Enter the inputs below to generate a prediction:")
 
     # user inputs
@@ -589,7 +672,7 @@ with tab2:
 
             # Layout
             fig_pred.update_layout(
-                title="Weekly Quantity Forecast (optimized)",
+                title="Weekly Quantity Forecast",
                 xaxis_title="Date",
                 yaxis_title="Quantity",
                 template="plotly_white",
@@ -657,7 +740,6 @@ with tab2:
 
 with tab3:
     st.header("Sensitivity Analysis")
-    st.write("Model outputs or charts go here.")
 
     last_date = df_full["date"].max()  # keep as Timestamp
     cutoff_date = last_date - pd.Timedelta(days=7)
@@ -690,7 +772,7 @@ with tab3:
     showline=True,
     linecolor=colors["black"],
     tickfont=dict(color=colors["black"]),
-    title=dict(text="Percentage", font=dict(color=colors["black"])))
+    title=dict(text="Quantity", font=dict(color=colors["black"])))
 
     fig5.update_yaxes(
         showline=True,
