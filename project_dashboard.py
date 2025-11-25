@@ -79,11 +79,11 @@ st.set_page_config(layout="wide") # make it full page
 st.title("Pricing Optimization Dashboard")
 
 #databases
-df_full = pd.read_csv(r"C:\Users\Ramon\Desktop\escuela\Data Analytics and AI\project\final_database.csv")
+df_full = pd.read_csv("final_database.csv")
 df_full = df_full.drop(columns=['Unnamed: 0'])
 df_full['date'] = pd.to_datetime(df_full['YEAR'].astype(str) + df_full['WEEK'].astype(str) + '1',format='%G%V%u')
 
-df = pd.read_csv(r"C:\Users\Ramon\Desktop\escuela\Data Analytics and AI\project\weekly_model_dashboard.csv")
+df = pd.read_csv("weekly_model_dashboard.csv")
 df = df.drop(columns=['Unnamed: 0'])
 df['date'] = pd.to_datetime(df['YEAR'].astype(str) + df['WEEK'].astype(str) + '1',format='%G%V%u')
 
