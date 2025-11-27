@@ -31,7 +31,7 @@ st.sidebar.markdown("<br>", unsafe_allow_html=True)
 options = st.sidebar.multiselect(
     "Select Country",
     df_death['Country'].unique().tolist(),
-    default=[],
+    default=['Europe', 'Latin America'],
 )
 
 first_date = df_death["Date_reported"].min()
