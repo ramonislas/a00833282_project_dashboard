@@ -87,7 +87,7 @@ df = pd.read_csv("weekly_model_dashboard.csv")
 df = df.drop(columns=['Unnamed: 0'])
 df['date'] = pd.to_datetime(df['YEAR'].astype(str) + df['WEEK'].astype(str) + '1',format='%G%V%u')
 
-df_tp_segment = df_full.groupby(['TP', 'segment'], as_index=False).agg(quantity=('quantity', 'sum'))
+df_tp_segment = df_full.groupby(['TP', 'segment'], as_index=False).agg(quantity=('quantity', 'sum'), price=('unit_price', 'mean'))
 
 # for the kpi of top store by quantity per week
 top_store = df_full.groupby(['TP', 'date'], as_index=False).agg(quantity=('quantity', 'sum'))
@@ -151,11 +151,7 @@ segment_percent = {}
 
 for tp, group in df_tp_segment.groupby('TP'):
     # sum quantity per segment for this TP
-    df_sum1 = (
-        group.groupby('segment', as_index=False)['quantity']
-        .sum()
-        .sort_values('quantity', ascending=False)
-    )
+    df_sum1 = (group.groupby('segment', as_index=False)['quantity'].sum().sort_values('quantity', ascending=False))
 
     #total quantity for this TP
     total_quantity = df_sum1['quantity'].sum()
@@ -173,10 +169,7 @@ for tp, group in df_tp_segment.groupby('TP'):
     
     df_sum = df_tp_segment.groupby(['TP'], as_index=False).agg(quantity=('quantity', 'sum'))
     total_quantity = df_sum['quantity'].sum()
-    last_row = {
-        'TP': 'Total',
-        'quantity': total_quantity
-    }
+    last_row = {'TP': 'Total', 'quantity': total_quantity}
 
     df_sum = pd.concat([df_sum, pd.DataFrame([last_row])], ignore_index=True)
     total = df_sum.iloc[-1]['quantity'] #the last one is the total
@@ -311,12 +304,10 @@ with tab1:
 ]
     
     # color theme (yellow, black, gray, white)
-    colors = {
-        "yellow": "#FFD700",
-        "white": "#FFFFFF",
-        "gray": "#A9A9A9",
-        "black": "#111111"
-    }
+    colors = {"yellow": "#FFD700",
+              "white": "#FFFFFF",
+              "gray": "#A9A9A9",
+              "black": "#111111"}
 
     # 2 graph columns
 
@@ -328,14 +319,8 @@ with tab1:
         df_sku = df_filtered.groupby('SKU', as_index=False)['quantity'].sum()
         df_top10 = df_sku.sort_values('quantity', ascending=False).head(10)
 
-        fig1 = px.bar(
-            df_top10,
-            x='SKU',
-            y='quantity',
-            title='Top 10 SKUs by Quantity',
-            color='quantity',
-            color_continuous_scale=[colors["gray"], colors["yellow"]],
-        )
+        fig1 = px.bar(df_top10, x='SKU', y='quantity', title='Top 10 SKUs by Quantity', color='quantity', 
+                      color_continuous_scale=[colors["gray"], colors["yellow"]])
 
         fig1.update_layout(
             template="plotly_dark", 
@@ -344,8 +329,8 @@ with tab1:
             title_font=dict(size=18, color=colors["black"]),
             font=dict(color=colors["black"]),  
             plot_bgcolor=colors["white"],      
-            paper_bgcolor=colors["white"]      
-        )
+            paper_bgcolor=colors["white"],
+            coloraxis_showscale=False)
 
         fig1.update_xaxes(
         showline=True,
@@ -387,8 +372,8 @@ with tab1:
             title_font=dict(size=18, color=colors["black"]),
             font=dict(color=colors["black"]),
             plot_bgcolor=colors["white"],
-            paper_bgcolor=colors["white"]
-        )
+            paper_bgcolor=colors["white"],
+            coloraxis_showscale=False)
 
         fig2.update_xaxes(
         showline=True,
@@ -428,8 +413,8 @@ with tab1:
             font=dict(color=colors["black"]),   
             title_font=dict(color=colors["black"]),
             plot_bgcolor=colors["white"],
-            paper_bgcolor=colors["white"]
-        )
+            paper_bgcolor=colors["white"],
+            coloraxis_showscale=False)
 
         fig3.update_xaxes(
             showline=True,
@@ -466,8 +451,8 @@ with tab1:
             title_font=dict(size=18, color=colors["black"]),
             font=dict(color=colors["black"]),
             plot_bgcolor=colors["white"],
-            paper_bgcolor=colors["white"]
-        )
+            paper_bgcolor=colors["white"],
+            coloraxis_showscale=False)
 
         fig2.update_xaxes(
         showline=True,
@@ -485,7 +470,6 @@ with tab1:
 
 with tab2:   
     st.header("Model Prediction")
-    import streamlit as st
 
     # Model info box
     st.markdown("""
@@ -537,12 +521,11 @@ with tab2:
 
     segment = st.selectbox(
         "Segment",
-        segment_percent[tp]['segment'].unique()
-    )
+        segment_percent[tp]['segment'].unique())
 
-    price_last_week = st.number_input("Price (Last Week)", min_value=0.0, value=10.0)
-    qty_last_week = st.number_input("Quantity (Last Week)", min_value=0.0, value=100.0)
-    qty_avg_prev_4w = st.number_input("Average Qty Previous 4 Weeks", min_value=0.0, value=120.0)
+    price_last_week = st.number_input("Price (Last Week)", min_value=1.0, value=10000.0)
+    qty_last_week = st.number_input("Quantity (Last Week)", min_value=0, value=100)
+    qty_avg_prev_4w = st.number_input("Average Qty Previous 4 Weeks", min_value=0, value=120)
 
     # model
     # drop NaNs from initial lag features
@@ -613,8 +596,7 @@ with tab2:
             segment=segment,
             price_last_week=price_last_week,
             qty_last_week=qty_last_week,
-            qty_avg_prev_4w=qty_avg_prev_4w
-        )
+            qty_avg_prev_4w=qty_avg_prev_4w)
 
         def result_box(tp, segment, quantity):
             st.markdown(f"""
@@ -638,14 +620,45 @@ with tab2:
                     </div>
                 </div>
             """, unsafe_allow_html=True)
-        
+
+        def revenue_box(exp_rev):
+            st.markdown(f"""
+                <div style="
+                    background-color: #fff9c4;
+                    padding: 22px;
+                    border-radius: 10px;
+                    border: 1px solid #e6e6e6;
+                    width: 100%;
+                    text-align: center;
+                    height: 130px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                ">
+                    <div style="font-size: 20px; color: #555; font-weight: 500;">
+                        Expected Revenue with last week's price is:
+                    </div>
+                    <div style="font-size: 30px; font-weight: 700; margin-top: 8px;">
+                        {f"${exp_rev:,.2f}"}
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+       
         col1, col2 = st.columns(2)
         with col1:
             tp, segment, quantity = result
             result_box(tp, segment, quantity)
+        
+        with col2:
+            exp_rev = quantity * price_last_week
+            revenue_box(exp_rev)
+            #price = df_tp_segment.loc[(df_tp_segment['TP'] == tp) & (df_tp_segment['segment'] == segment), "price"].iloc[0]
+            #st.write(f"Expected Revenue ${exp_rev} with last week's price")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        col1, col2 = st.columns(2)
 
-            st.markdown("<br>", unsafe_allow_html=True)
-
+        with col1:
             # Replace with your actual colors from previous charts
             actual_color = "#1f77b4"      # example
             predicted_color = "#ff7f0e"   # example
@@ -658,8 +671,7 @@ with tab2:
                 y=y_test,
                 mode='lines',
                 name='Actual',
-                line=dict(color=actual_color, width=2)
-            ))
+                line=dict(color=actual_color, width=2)))
 
             # Predicted line
             fig_pred.add_trace(go.Scatter(
@@ -700,30 +712,30 @@ with tab2:
             # Streamlit visualization
             st.plotly_chart(fig_pred, use_container_width=True)
         
-        def kpi_box(label, value, suffix=""):
-            st.markdown(f"""
-                <div style="
-                    background-color: #f8f9fa;
-                    padding: 22px;
-                    border-radius: 10px;
-                    border: 1px solid #e6e6e6;
-                    width: 100%;
-                    text-align: center;
-                    height: 130px;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                ">
-                    <div style="font-size: 30px; color: #555; font-weight: 500;">
-                        {label}
-                    </div>
-                    <div style="font-size: 20px; font-weight: 600; margin-top: 8px;">
-                        {round(value, 2)}{suffix}
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-
         with col2:
+            def kpi_box(label, value, suffix=""):
+                st.markdown(f"""
+                    <div style="
+                        background-color: #f8f9fa;
+                        padding: 22px;
+                        border-radius: 10px;
+                        border: 1px solid #e6e6e6;
+                        width: 100%;
+                        text-align: center;
+                        height: 130px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                    ">
+                        <div style="font-size: 30px; color: #555; font-weight: 500;">
+                            {label}
+                        </div>
+                        <div style="font-size: 20px; font-weight: 600; margin-top: 8px;">
+                            {round(value, 2)}{suffix}
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
+
             st.subheader('Model Performance Metrics')
             kpi1, kpi2 = st.columns(2)
             with kpi1:
@@ -736,7 +748,6 @@ with tab2:
                 kpi_box('MAPE', mape, suffix='%')
             with kpi4:
                 kpi_box('R2', r2)
-
 
 with tab3:
     st.header("Sensitivity Analysis")
