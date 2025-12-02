@@ -158,11 +158,9 @@ for tp, group in df_tp_segment.groupby('TP'):
     df_sum1['%'] = (df_sum1['quantity'] / total_quantity)
 
     #total row
-    total_row = pd.DataFrame({
-        'segment': ['Total'],
-        'quantity': [total_quantity],
-        '%': [1]
-    })
+    total_row = pd.DataFrame({'segment': ['Total'],
+                              'quantity': [total_quantity],
+                              '%': [1]})
 
     df_sum1 = pd.concat([df_sum1, total_row], ignore_index=True)
     segment_percent[tp] = df_sum1
@@ -322,27 +320,15 @@ with tab1:
         fig1 = px.bar(df_top10, x='SKU', y='quantity', title='Top 10 SKUs by Quantity', color='quantity', 
                       color_continuous_scale=[colors["gray"], colors["yellow"]])
 
-        fig1.update_layout(
-            template="plotly_dark", 
-            xaxis_title="SKU",
-            yaxis_title="Total Quantity",
-            title_font=dict(size=18, color=colors["black"]),
-            font=dict(color=colors["black"]),  
-            plot_bgcolor=colors["white"],      
-            paper_bgcolor=colors["white"],
-            coloraxis_showscale=False)
+        fig1.update_layout(template="plotly_dark", xaxis_title="SKU", yaxis_title="Total Quantity",
+                           title_font=dict(size=18, color=colors["black"]), font=dict(color=colors["black"]), plot_bgcolor=colors["white"],      
+                           paper_bgcolor=colors["white"], coloraxis_showscale=False)
 
-        fig1.update_xaxes(
-        showline=True,
-        linecolor=colors["black"],
-        tickfont=dict(color=colors["black"]),
-        title=dict(text="SKU", font=dict(color=colors["black"])))
+        fig1.update_xaxes(showline=True, linecolor=colors["black"], tickfont=dict(color=colors["black"]), 
+                          title=dict(text="SKU", font=dict(color=colors["black"])))
 
-        fig1.update_yaxes(
-            showline=True,
-            linecolor=colors["black"],
-            tickfont=dict(color=colors["black"]),
-            title=dict(text="Quantity", font=dict(color=colors["black"])))
+        fig1.update_yaxes(showline=True, linecolor=colors["black"], tickfont=dict(color=colors["black"]),
+                          title=dict(text="Quantity", font=dict(color=colors["black"])))
 
         fig1.update_xaxes(tickangle=45)
 
@@ -355,37 +341,17 @@ with tab1:
         df_bar["pct"] = df_bar["quantity"] / df_bar["quantity"].sum()
         df_bar = df_bar.sort_values('quantity', ascending=True)
 
-        fig2 = px.bar(
-            df_bar,
-            x="pct",
-            y="segment",
-            orientation="h",
-            title="Quantity Share by Segment",
-            color="pct",
-            color_continuous_scale=[colors["gray"], colors["yellow"]],
-        )
+        fig2 = px.bar(df_bar, x="pct", y="segment", orientation="h", title="Quantity Share by Segment", color="pct",
+                      color_continuous_scale=[colors["gray"], colors["yellow"]])
 
-        fig2.update_layout(
-            template="plotly_white",
-            xaxis_title="Percentage",
-            yaxis_title="Segment",
-            title_font=dict(size=18, color=colors["black"]),
-            font=dict(color=colors["black"]),
-            plot_bgcolor=colors["white"],
-            paper_bgcolor=colors["white"],
-            coloraxis_showscale=False)
+        fig2.update_layout(template="plotly_white", xaxis_title="Percentage", yaxis_title="Segment", title_font=dict(size=18, color=colors["black"]),
+                           font=dict(color=colors["black"]), plot_bgcolor=colors["white"], paper_bgcolor=colors["white"], coloraxis_showscale=False)
 
-        fig2.update_xaxes(
-        showline=True,
-        linecolor=colors["black"],
-        tickfont=dict(color=colors["black"]),
-        title=dict(text="Percentage", font=dict(color=colors["black"])))
+        fig2.update_xaxes(showline=True, linecolor=colors["black"], tickfont=dict(color=colors["black"]), 
+                          title=dict(text="Percentage", font=dict(color=colors["black"])))
 
-        fig2.update_yaxes(
-            showline=True,
-            linecolor=colors["black"],
-            tickfont=dict(color=colors["black"]),
-            title=dict(text="Segment", font=dict(color=colors["black"])))
+        fig2.update_yaxes(showline=True, linecolor=colors["black"], tickfont=dict(color=colors["black"]),
+                          title=dict(text="Segment", font=dict(color=colors["black"])))
 
         st.plotly_chart(fig2, use_container_width=True)
     
@@ -395,38 +361,19 @@ with tab1:
         # ttm trend chart
         df_week = df_filtered.groupby('date', as_index=False).agg(quantity=('quantity', 'sum'))
         
-        fig3 = px.line(
-            df_week,
-            x="date",
-            y="quantity",
-            title=f"Trend From {start_date} to {end_date}",
-            markers=True
-        )
+        fig3 = px.line(df_week, x="date", y="quantity", title=f"Trend From {start_date} to {end_date}", markers=True)
 
-        fig3.update_traces(
-            line=dict(color=colors["yellow"], width=3),
-            marker=dict(color=colors["gray"]))
+        fig3.update_traces(line=dict(color=colors["yellow"], width=3), marker=dict(color=colors["gray"]))
 
-        fig3.update_layout(
-            xaxis_title="Date",
-            yaxis_title="Quantity",
-            font=dict(color=colors["black"]),   
-            title_font=dict(color=colors["black"]),
-            plot_bgcolor=colors["white"],
-            paper_bgcolor=colors["white"],
-            coloraxis_showscale=False)
+        fig3.update_layout(xaxis_title="Date", yaxis_title="Quantity", font=dict(color=colors["black"]), 
+                           title_font=dict(color=colors["black"]), plot_bgcolor=colors["white"], paper_bgcolor=colors["white"],
+                           coloraxis_showscale=False)
 
-        fig3.update_xaxes(
-            showline=True,
-            linecolor=colors["black"],
-            tickfont=dict(color=colors["black"]),
-            title=dict(text="Date", font=dict(color=colors["black"])))
+        fig3.update_xaxes(showline=True, linecolor=colors["black"], tickfont=dict(color=colors["black"]),
+                          title=dict(text="Date", font=dict(color=colors["black"])))
 
-        fig3.update_yaxes(
-            showline=True,
-            linecolor=colors["black"],
-            tickfont=dict(color=colors["black"]),
-            title=dict(text="Quantity", font=dict(color=colors["black"])))
+        fig3.update_yaxes(showline=True, linecolor=colors["black"], tickfont=dict(color=colors["black"]),
+                          title=dict(text="Quantity", font=dict(color=colors["black"])))
 
         st.plotly_chart(fig3, use_container_width=True)
     
@@ -434,37 +381,17 @@ with tab1:
         df_stores = df_filtered.groupby(['TP'], as_index=False).agg(quantity=('quantity', 'sum'))
         df_stores = df_stores.sort_values('quantity', ascending=True)
 
-        fig2 = px.bar(
-            df_stores,
-            x="quantity",
-            y="TP",
-            orientation="h",
-            title="Quantity by TP",
-            color="quantity",
-            color_continuous_scale=[colors["gray"], colors["yellow"]],
-        )
+        fig2 = px.bar(df_stores, x="quantity", y="TP", orientation="h", title="Quantity by TP", 
+                      color="quantity", color_continuous_scale=[colors["gray"], colors["yellow"]])
 
-        fig2.update_layout(
-            template="plotly_white",
-            xaxis_title="Quantity",
-            yaxis_title="TP",
-            title_font=dict(size=18, color=colors["black"]),
-            font=dict(color=colors["black"]),
-            plot_bgcolor=colors["white"],
-            paper_bgcolor=colors["white"],
-            coloraxis_showscale=False)
+        fig2.update_layout(template="plotly_white", xaxis_title="Quantity", yaxis_title="TP", title_font=dict(size=18, color=colors["black"]),
+                           font=dict(color=colors["black"]), plot_bgcolor=colors["white"], paper_bgcolor=colors["white"], coloraxis_showscale=False)
 
-        fig2.update_xaxes(
-        showline=True,
-        linecolor=colors["black"],
-        tickfont=dict(color=colors["black"]),
-        title=dict(text="Quantity", font=dict(color=colors["black"])))
+        fig2.update_xaxes(showline=True, linecolor=colors["black"], 
+                          tickfont=dict(color=colors["black"]), title=dict(text="Quantity", font=dict(color=colors["black"])))
 
-        fig2.update_yaxes(
-            showline=True,
-            linecolor=colors["black"],
-            tickfont=dict(color=colors["black"]),
-            title=dict(text="TP", font=dict(color=colors["black"])))
+        fig2.update_yaxes(showline=True, linecolor=colors["black"], 
+                          tickfont=dict(color=colors["black"]), title=dict(text="TP", font=dict(color=colors["black"])))
 
         st.plotly_chart(fig2, use_container_width=True)
 
@@ -519,9 +446,7 @@ with tab2:
 
     tp = st.selectbox("TP", df_sum['TP'].unique())
 
-    segment = st.selectbox(
-        "Segment",
-        segment_percent[tp]['segment'].unique())
+    segment = st.selectbox("Segment", segment_percent[tp]['segment'].unique())
 
     price_last_week = st.number_input("Price (Last Week)", min_value=1.0, value=10000.0)
     qty_last_week = st.number_input("Quantity (Last Week)", min_value=0, value=100)
@@ -534,10 +459,7 @@ with tab2:
     df_model['week_sin'] = np.sin(2 * np.pi * df_model['WEEK'] / 52)
     df_model['week_cos'] = np.cos(2 * np.pi * df_model['WEEK'] / 52)
     
-    features = [
-        'week_sin', 'week_cos', 'price_avg_last_week', 
-        'qty_last_week', 'qty_avg_prev_4w', 'event_effect'
-    ]
+    features = ['week_sin', 'week_cos', 'price_avg_last_week', 'qty_last_week', 'qty_avg_prev_4w', 'event_effect']
     target = 'quantity'
 
     train_size = int(len(df_model) * 0.7)
@@ -559,8 +481,7 @@ with tab2:
         learning_rate=0.3,
         max_depth=3,
         n_estimators=100,
-        subsample=0.5
-    )
+        subsample=0.5)
 
     # Train the model
     best_xgb.fit(X_train, y_train)
@@ -660,54 +581,25 @@ with tab2:
 
         with col1:
             # Replace with your actual colors from previous charts
-            actual_color = "#1f77b4"      # example
-            predicted_color = "#ff7f0e"   # example
+            actual_color = "#1f94b4"      # example
+            predicted_color = "#ffbf0e"   # example
 
             fig_pred = go.Figure()
 
             # Actual line
-            fig_pred.add_trace(go.Scatter(
-                x=date_test,
-                y=y_test,
-                mode='lines',
-                name='Actual',
-                line=dict(color=actual_color, width=2)))
+            fig_pred.add_trace(go.Scatter(x=date_test, y=y_test, mode='lines', name='Actual', line=dict(color=actual_color, width=2)))
 
             # Predicted line
-            fig_pred.add_trace(go.Scatter(
-                x=date_test,
-                y=y_pred,
-                mode='lines',
-                name='Predicted',
-                line=dict(color=predicted_color, width=2, dash="dash")
-            ))
+            fig_pred.add_trace(go.Scatter(x=date_test, y=y_pred, mode='lines', name='Predicted', line=dict(color=predicted_color, width=2, dash="dash")))
 
             # Layout
-            fig_pred.update_layout(
-                title="Weekly Quantity Forecast",
-                xaxis_title="Date",
-                yaxis_title="Quantity",
-                template="plotly_white",
-                width=900,
-                height=450,
-                legend=dict(x=0, y=1, font=dict(color=colors['black'])),
-                title_font=dict(size=18, color=colors["black"]),
-                font=dict(color=colors["black"]),
-                plot_bgcolor=colors["white"],
-                paper_bgcolor=colors["white"]
-            )
+            fig_pred.update_layout(title="Weekly Quantity Forecast", xaxis_title="Date", yaxis_title="Quantity", template="plotly_white",
+                                   width=900, height=450, legend=dict(x=0, y=1, font=dict(color=colors['black'])), title_font=dict(size=18, color=colors["black"]),
+                                   font=dict(color=colors["black"]), plot_bgcolor=colors["white"], paper_bgcolor=colors["white"])
 
-            fig_pred.update_xaxes(
-                showline=True,
-                linecolor=colors["black"],
-                tickfont=dict(color=colors["black"]),
-                title=dict(text="Quantity", font=dict(color=colors["black"])))
+            fig_pred.update_xaxes(showline=True, linecolor=colors["black"], tickfont=dict(color=colors["black"]), title=dict(text="Quantity", font=dict(color=colors["black"])))
 
-            fig_pred.update_yaxes(
-                showline=True,
-                linecolor=colors["black"],
-                tickfont=dict(color=colors["black"]),
-                title=dict(text="TP", font=dict(color=colors["black"])))
+            fig_pred.update_yaxes(showline=True, linecolor=colors["black"], tickfont=dict(color=colors["black"]), title=dict(text="TP", font=dict(color=colors["black"])))
             
             # Streamlit visualization
             st.plotly_chart(fig_pred, use_container_width=True)
@@ -755,41 +647,18 @@ with tab3:
     last_date = df_full["date"].max()  # keep as Timestamp
     cutoff_date = last_date - pd.Timedelta(days=7)
     df_last_week = df_full[df_full["date"] >= cutoff_date]
-    df_segment_last_week = (
-        df_last_week
-        .groupby("segment", as_index=False)
-        .agg(quantity=("quantity", "sum"))
-    )
+    df_segment_last_week = (df_last_week.groupby("segment", as_index=False).agg(quantity=("quantity", "sum")))
     df_segment_last_week = df_segment_last_week.sort_values('quantity', ascending=True)
 
-    fig5 = px.bar(df_segment_last_week,            
-        x="quantity",
-        y="segment",
-        orientation="h",
-        title="Quantity by Segment (Last 7 days)",
-        color="quantity",
+    fig5 = px.bar(df_segment_last_week, x="quantity", y="segment", orientation="h", title="Quantity by Segment (Last 7 days)", color="quantity",
         color_continuous_scale=[colors["gray"], colors["yellow"]],)
 
-    fig5.update_layout(
-        template="plotly_white",
-        xaxis_title="Quantity",
-        yaxis_title="Segment",
-        title_font=dict(size=18, color=colors["black"]),
-        font=dict(color=colors["black"]),
-        plot_bgcolor=colors["white"],
-        paper_bgcolor=colors["white"])
+    fig5.update_layout(template="plotly_white", xaxis_title="Quantity", yaxis_title="Segment", title_font=dict(size=18, color=colors["black"]),
+                       font=dict(color=colors["black"]), plot_bgcolor=colors["white"], paper_bgcolor=colors["white"], coloraxis_showscale=False)
 
-    fig5.update_xaxes(
-    showline=True,
-    linecolor=colors["black"],
-    tickfont=dict(color=colors["black"]),
-    title=dict(text="Quantity", font=dict(color=colors["black"])))
+    fig5.update_xaxes(showline=True, linecolor=colors["black"], tickfont=dict(color=colors["black"]), title=dict(text="Quantity", font=dict(color=colors["black"])))
 
-    fig5.update_yaxes(
-        showline=True,
-        linecolor=colors["black"],
-        tickfont=dict(color=colors["black"]),
-        title=dict(text="Segment", font=dict(color=colors["black"])))
+    fig5.update_yaxes(showline=True, linecolor=colors["black"], tickfont=dict(color=colors["black"]), title=dict(text="Segment", font=dict(color=colors["black"])))
 
     st.plotly_chart(fig5, use_container_width=True)
 
