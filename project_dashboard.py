@@ -476,7 +476,6 @@ with tab2:
     best_xgb = XGBRegressor(
         objective='reg:squarederror',
         random_state=42,
-        n_jobs=-1,
         colsample_bytree=0.7,
         learning_rate=0.3,
         max_depth=3,
